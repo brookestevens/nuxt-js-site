@@ -3,18 +3,18 @@
   "version": "1.0.0",
   "engines": {
     "node" : "12.x",
-    "npm" : "6.x"
+    "npm" : "6.12.0"
   },
   "description": "My bee&#39;s knees Nuxt.js project",
-  "author": "brookestevens",
+  "author": "Brooke Stevens",
   "private": true,
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "heroku-prebuild" : "echo 'Pre building app script' && npm run generate",
-    "heroku-postbuild" : "echo 'post build script' "
+    "heroku-prebuild" : "echo Pre building app script",
+    "heroku-postbuild" : "npm run generate"
   },
   "dependencies": {
     "nuxt": "^2.0.0",
