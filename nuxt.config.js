@@ -40,7 +40,13 @@ export default {
   modules: [
     // Doc: https://bootstrap-vue.js.org
     'bootstrap-vue/nuxt',
+    '@nuxtjs/proxy'
   ],
+  proxy: {
+    '/api' : {
+      target: 'http://localhost:8000'
+    }
+  },
   /*
   ** Build configuration
   */

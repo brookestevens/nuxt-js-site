@@ -2,16 +2,7 @@
     "root": "dist/",
     "proxies": {
       "/api/": {
-        "origin": "http://dev-atlas-tam.pantheonsite.io/api"
-      },
-      "/entity/": {
-         "origin" : "http://dev-atlas-tam.pantheonsite.io/entity"
-      },
-      "/sites/": {
-        "origin" : "http://dev-atlas-tam.pantheonsite.io/sites"
-      },
-      "/hooks/":{
-        "origin" : "http://dev-atlas-tam.pantheonsite.io/hooks"
+        "origin": "https://nibble-api.herokuapp.com/api"
       }
     },
     "headers": {
