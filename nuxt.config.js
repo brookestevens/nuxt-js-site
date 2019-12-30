@@ -40,8 +40,19 @@ export default {
   modules: [
     // Doc: https://bootstrap-vue.js.org
     'bootstrap-vue/nuxt',
+    '@nuxtjs/onesignal',
+    '@nuxtjs/pwa',
     '@nuxtjs/proxy'
   ],
+  oneSignal: {
+    init: {
+      appId: process.env.APP_ID,
+      allowLocalhostAsSecureOrigin: true,
+      welcomeNotification: {
+          disable: true
+      }
+    }
+  },
   proxy: {
     '/api' : {
       target: 'http://localhost:8000'
@@ -51,9 +62,6 @@ export default {
   ** Build configuration
   */
   build: {
-    /*
-    ** You can extend webpack config here
-    */
     extend (config, ctx) {
     }
   }

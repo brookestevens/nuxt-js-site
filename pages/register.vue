@@ -1,18 +1,18 @@
 <template>
   <div class="container">
-    <h2> Nibble! </h2>
+    <h2> Register </h2>
     <br/>
-    <LoginForm/>
+    <NewUserForm/>
   </div>
 </template>
 
 <script>
-import LoginForm from "../components/LoginForm";
+import NewUserForm from "../components/NewUserForm";
 
 export default{
-  name: "LoginPage",
+  name: "Register",
   components:{
-    LoginForm
+    NewUserForm
   },
   layout: 'home'
 }
