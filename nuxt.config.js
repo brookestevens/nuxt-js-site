@@ -49,7 +49,14 @@ export default {
       appId: process.env.APP_ID,
       allowLocalhostAsSecureOrigin: true,
       welcomeNotification: {
-          disable: true
+          disable: false,
+          title: "Welcome",
+          message: "Thanks for visiting!"
+      },
+      notifyButton: {
+        enable: true,
+        size: 'medium',
+        position: 'bottom-left'
       }
     }
   },

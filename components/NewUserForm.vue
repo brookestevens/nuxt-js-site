@@ -9,7 +9,7 @@
       placeholder="First Name"
     ></b-input>
     <br/>
-    
+
     <label class="sr-only" for="lname">Last Name</label>
     <b-input v-model="newUser.lname" id="lname" type="text" placeholder="Last Name"></b-input>
     <br />
@@ -57,7 +57,7 @@ export default {
     handleNewAccountSubmit: function(e) {
       e.preventDefault();
       if (this.verifyData(this.newUser)) {
-        fetch('api/addUser', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)})
+        fetch('/api/addUser', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(this.newUser)})
         .then(res => res.json())
         .then(res => {
         if(JSON.parse(res.status) === 1){
