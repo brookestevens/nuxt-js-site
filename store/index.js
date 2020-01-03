@@ -1,9 +1,11 @@
+import todosDb from '../assets/openIndexDB';
+
 export const state = () => ({
-  todos: [],
-  currentToDo: {},
-  loggedIn: false,
-  sort: 'all',
-  dark: false
+  todos: [], //indexDB
+  currentToDo: {}, //indexDB
+  loggedIn: 'false', //localstorage
+  sort: 'all', //localstorage
+  dark: 'false' //localstorage
 })
 
 export const mutations = {
@@ -12,13 +14,16 @@ export const mutations = {
     state.sort = 'all';
   },
   LOGIN(state){
-    state.loggedIn = true;
+    state.loggedIn = localStorage.getItem('login'); //set local storage
+  },
+  LOGOUT(state){
+    state.loggedIn = localStorage.getItem('login'); //set local storage
   },
   UPDATE(state, payload){
     updateTask(state.todos, payload); //function to update local, save on requests being made
   },
   GET_SORTED_TODOS(state, payload){
-    state.sort = payload.option;
+    state.sort = localStorage.getItem('sort');
     state.todos = payload.data;
   },
   SET_CURRENT_ITEM(state, payload){
@@ -31,7 +36,7 @@ export const mutations = {
     state.todos = payload;
   },
   DARK_MODE(state){
-    state.dark = !state.dark;
+    state.dark = localStorage.getItem('dark');
   }
 }
 
@@ -61,10 +66,17 @@ export const actions = {
     // .catch(err => console.log(err))
   },
   setCurrentItem({commit}, payload){
-    commit('SET_CURRENT_ITEM', payload);  
+    commit('SET_CURRENT_ITEM', payload);
+    todosDb.connect().then(db => {
+      console.log(db);
+      db.add('curr-todo', payload).catch(err => console.log("error adding to db: ", err));
+    }).catch(err => console.log("error connecting to DB: ", err));
   },
   update({commit}, payload){
     commit('UPDATE', payload);
+    todosDb.connect().then(db => {
+      db.put('curr-todo', payload).catch(err => console.log("error adding to db: ", err));
+    }).catch(err => console.log("error connecting to DB: ", err));
     // fetch('/api/updateTask', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)})
     // .then(res => res.json())
     // .then(res => {
@@ -82,9 +94,14 @@ export const actions = {
         commit('GET_ALL_TODOS', res.results);
       }
     })
+    .then(()=>{
+      const db = todosDb.connect();
+      db.then(() => console.log('new db conn')).catch(err => console.log(err));
+    })
     .catch(err => console.log(err))
   },
   getSortedTodos({commit},payload){
+    localStorage.setItem('sort', payload);
     switch(payload){
       case 'all':
         this.getAllTodos();
@@ -116,6 +133,7 @@ export const actions = {
       .then(res => res.json())
       .then(res => {
         if(res.status === 1){
+          localStorage.setItem('login', 'true');
           commit('LOGIN');
         }
         return res.status;
@@ -124,7 +142,13 @@ export const actions = {
         console.log("Error: ", err);
       });
   },
+  logout({commit}){
+    localStorage.setItem('login', 'false');
+    commit('LOGOUT');
+  },
   changeView({commit}){
+    let s = !JSON.parse(this.state.dark);
+    localStorage.setItem('dark', s.toString());
     commit('DARK_MODE');
   }
 

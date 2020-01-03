@@ -15,7 +15,7 @@ import AddTodo from "../components/AddTodo";
 export default{
   name: "Dashboard",
   created: function(){
-    fetch(`${window.origin}/api/validate`)
+    fetch(`/api/validate`)
     .then(res => res.json())
     .then(res => {
       if(res.status === 1 ){
@@ -24,7 +24,14 @@ export default{
       else{
         this.$router.push('/');
       }
-    }).catch(err => console.log(err))
+    }).catch(err => {
+      console.log(err);
+    })
+  },
+  mounted: function(){
+    //set store to local storage
+    this.$store.commit('LOGIN');
+    this.$store.commit('DARK_MODE');
   },
   computed: {
     todos(){

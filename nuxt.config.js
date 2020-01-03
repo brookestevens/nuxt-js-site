@@ -46,7 +46,7 @@ export default {
   ],
   oneSignal: {
     init: {
-      appId: process.env.APP_ID,
+      appId: process.env.APP_ID || '78791ca2-73df-4beb-9bec-a94da1b0a71e',
       allowLocalhostAsSecureOrigin: true,
       welcomeNotification: {
           disable: false,
@@ -58,6 +58,12 @@ export default {
         size: 'medium',
         position: 'bottom-left'
       }
+    }
+  },
+  pwa:{
+    workbox:{
+      skipWaiting : true,
+      workboxExtensions: './plugins/backgroundSync-workbox.js'
     }
   },
   proxy: {
