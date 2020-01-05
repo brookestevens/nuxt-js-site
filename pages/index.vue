@@ -11,9 +11,6 @@ import LoginForm from "../components/LoginForm";
 
 export default{
   name: "LoginPage",
-  mounted: function(){
-    console.log("mounted index page");
-  },
   components:{
     LoginForm
   },

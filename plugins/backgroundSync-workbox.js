@@ -1,4 +1,4 @@
-console.log("Back ground sync");
+console.log("Background sync plugin added!");
 //https://developers.google.com/web/tools/workbox/modules/workbox-background-sync
 
 const bgSyncPlugin = new workbox.backgroundSync.Plugin('myQueueName', {

@@ -14,8 +14,11 @@ https://medium.com/@mario.brendel1990/vuejs-pwa-and-indexeddb-74e6b9699cef => th
 
 //replace with the idb module or put it all in the store?
 class todosDB {
+    constructor(){
+        this.db = null;
+    }
     static get DB_NAME() {
-      return 'todos-db';
+        return 'todos-db';
     }
     static get ALL_TODOS_STORE(){
         return 'all-todos';
@@ -23,82 +26,33 @@ class todosDB {
     static get CURR_TODO(){
         return 'curr-todo';
     }
-
     getError(){
         return new Promise((resolve, reject) => {
             resolve(this);
         });
     }
 
-    connect() { //make a new DB and stores, return a promise
+    async connect() { //make a new DB and stores, return a promise
         if(window.indexedDB){
-            return openDB( todosDB.DB_NAME, 1,{
+            this.db = await openDB( todosDB.DB_NAME, 1,{
                 upgrade(db){
                     console.log("making a new object store");
                     if(!db.objectStoreNames.contains(todosDB.ALL_TODOS_STORE)) {
-                        db.createObjectStore(todosDB.ALL_TODOS_STORE, {keyPath: 'id'});
+                        db.createObjectStore(todosDB.ALL_TODOS_STORE, {keyPath: 'name'});
                     }
                     if(!db.objectStoreNames.contains(todosDB.CURR_TODO)){
                         db.createObjectStore(todosDB.CURR_TODO, {keyPath: 'id'});
                     }
                 }
             });
+            return this.db;
         }
         else{
             console.log("Browser doesnt support indexedDB");
             return this.getError();
         }
     }
-    setCookie(){
-        //put the cookie in the DB
-    }
-    // getTransaction(stores, readWrite = 'readwrite') {
-    //   return this.db.transaction(stores, readWrite)
-    // }
-    
-    // async getAll() {
-    //   return new Promise((resolve, reject) => {
-    //     let words = []
-    //     const store = this.getWordsStore()
-    //     store.openCursor().onsuccess = event => {
-    //       let cursor = event.target.result
-    //       if (cursor) {
-    //         words.push(cursor.value)
-    //         cursor.continue()
-    //       }
-    //       resolve(words)
-    //     }
-    //     store.openCursor().onerror = () => {
-    //       reject(this)
-    //     }
-    //   })
-    // }
-    
-    //add current Todo
-    addCurrTodo(payload){
-        this.add('curr-todo', payload, 'currentTodo');
-    }
-    //update current todo
-    updateCurrTodo(payload){
-        this.put(payload, 'currentTodo');
-    }
 
 }
-//     async put(work) {
-//       return new Promise((resolve, reject) => {
-//         const req = this.getWordsStore().put(work)
-//         req.onsuccess = () => {
-//           resolve(work)
-//         }
-//         req.onerror = () => {
-//           reject(this)
-//         }
-//       })
-//     }
-  
-//     remove(wordId) {
-//       this.getWordsStore().delete(wordId)
-//     }
-//   }
-  
+
 export default new todosDB()
