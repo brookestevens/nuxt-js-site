@@ -21,7 +21,7 @@
 
         <p> Task Priority: {{form.priority}}</p>
         <b-input-group id="input-group-5" prepend="1" append="10" class="mt-3">
-          <b-form-input id="form-prior" type="range" min="1" max="10" v-model="form.priority"></b-form-input>
+          <b-form-input id="form-prior" type="range" min="1" max="10" v-model="form.priority" required ></b-form-input>
         </b-input-group>
 
         <b-button type="submit" variant="primary">Submit</b-button>
@@ -35,7 +35,7 @@
       <button @click="handleNextStep(3)">Add bites</button>
     </div>
     <div v-if="currStep === 3" class="step-three">
-      <p>Adding sub tasks</p>
+      <p>Adding sub tasks.. PUT THIS IN LATER!</p>
       <button @click="onSubmit">Add task</button>
     </div>
     <div v-if="currStep === 4" class="step-four">
@@ -59,7 +59,7 @@ export default {
       },
       addSubtask: false,
       currStep: 1,
-      subtasks: [] //array of arrays
+      subtasks: [] //array of objects
     };
   },
   methods: {
@@ -82,9 +82,9 @@ export default {
     onSubmit: function(e) {
       e.preventDefault();
       if (this.subtasks.length === 0) {
-        this.$store.dispatch('addTodo', this.form);
+        this.$store.dispatch('addTodo', {...this.form, children: []});
       } else {
-        this.$store.dispatch('addTodo', {...this.form, subtasks: this.subtasks});
+        this.$store.dispatch('addTodo', {...this.form, children: this.subtasks});
       }
       this.currStep = 4;
     },

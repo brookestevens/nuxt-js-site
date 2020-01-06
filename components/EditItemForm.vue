@@ -50,25 +50,21 @@ export default {
         return{
           form: {
             id: this.todo.id,
+            index: this.todo.index,
             name: this.todo.name,
             desc: this.todo.desc,
             start: this.todo.start,
             stop: this.todo.stop,
             status: this.todo.status,
             children: this.todo.children,
+            priority: this.todo.priority || null
           },
-          priority: this.todo.priority || null
         }
     },
     props:['todo'],
     methods:{
         handleUpdate: function(){
-            if(this.priority){
-              this.$store.dispatch('update', {...this.form, priority: this.priority});
-            }
-            else{
-              this.$store.dispatch('update', this.form);
-            }
+          this.$store.dispatch('update', this.form);
         },
         handleDelete: function(){
             this.$store.dispatch('delete', {id: this.todo.id});

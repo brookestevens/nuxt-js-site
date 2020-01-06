@@ -38,7 +38,7 @@ class todosDB {
                 upgrade(db){
                     console.log("making a new object store");
                     if(!db.objectStoreNames.contains(todosDB.ALL_TODOS_STORE)) {
-                        db.createObjectStore(todosDB.ALL_TODOS_STORE, {keyPath: 'name'});
+                        db.createObjectStore(todosDB.ALL_TODOS_STORE, {keyPath: 'id'});
                     }
                     if(!db.objectStoreNames.contains(todosDB.CURR_TODO)){
                         db.createObjectStore(todosDB.CURR_TODO, {keyPath: 'id'});

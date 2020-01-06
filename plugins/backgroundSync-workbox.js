@@ -6,7 +6,7 @@ const bgSyncPlugin = new workbox.backgroundSync.Plugin('myQueueName', {
 });
 
 workbox.routing.registerRoute(
-    /\/api\/.*\/*.json/,
+    /\/api\//,
     new workbox.strategies.NetworkOnly({
       plugins: [bgSyncPlugin]
     }),
