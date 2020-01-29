@@ -46,6 +46,12 @@
 <script>
 export default {
     name: "EditItemForm",
+    mounted: function(){
+      let s = new Date(this.todo.start).toISOString().substring(0,16);
+      let e = new Date(this.todo.stop).toISOString().substring(0,16);
+      this.form.start = s;
+      this.form.stop = e;
+    },
     data: function(){
         return{
           form: {
@@ -53,8 +59,8 @@ export default {
             index: this.todo.index,
             name: this.todo.name,
             desc: this.todo.desc,
-            start: this.todo.start,
-            stop: this.todo.stop,
+            start: null,
+            stop: null,
             status: this.todo.status,
             children: this.todo.children,
             priority: this.todo.priority || null

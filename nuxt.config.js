@@ -22,7 +22,7 @@ export default {
   /*
   ** Global CSS
   */
-  css: [
+  css:[
   ],
   /*
   ** Plugins to load before mounting the App
@@ -63,7 +63,11 @@ export default {
   pwa:{
     workbox:{
       skipWaiting : true,
+      importScripts: ['./webPush-worker.js'],
       workboxExtensions: './plugins/backgroundSync-workbox.js'
+    },
+    manifest:{
+      name: 'Nibble!'
     }
   },
   proxy: {

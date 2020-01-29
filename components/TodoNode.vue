@@ -1,23 +1,22 @@
 <template>
-  <div class="todo-container">
+    <!-- The information and modal -->
     <div class="todo-child">
-        <input v-model="checked" type="checkbox"/>
+        <input class="todo-checkbox" v-model="checked" type="checkbox"/>
+        <h4 :class="isChecked" @click="handleClick($bvModal)">{{todo.name}}</h4>
+        <p :class="isChecked" >{{todo.desc}}</p>
+        <b-modal :id="'modal-'+todo.id" :title="todo.name" hide-footer>
+            <EditItemForm :todo="todo"/>
+        </b-modal>
     </div>
-    <div class="todo-child">
-      <h3 :class="isChecked" @click="handleClick($bvModal)">{{todo.name}}</h3>
-      <p :class="isChecked" >{{todo.desc}}</p>
-    </div>
-    <b-modal :id="'modal-'+todo.id" :title="todo.name" hide-footer>
-        <EditItemForm :todo="todo"/>
-    </b-modal>
-  </div>
 </template>
 
 <script>
 import EditItemForm from "../components/EditItemForm";
 export default {
     name: "TodoNode",
-    props: ['todo'],
+    props: {
+        todo: Object
+    },
     data: function(){
         return{
             checked: false
@@ -51,10 +50,19 @@ export default {
         display: flex;
     }
     .todo-child{
-        margin-left: 1em;
+        margin-left: 1.5em;
     }
-    h3:hover{
+    .todo-checkbox{
+        display: inline-block;
+    }
+    h4{
+        display: inline-block;
+    }
+    h4:hover{
         color: red;
+    }
+    p{
+        text-align: left;
     }
     .task-checked{
         text-decoration: line-through;

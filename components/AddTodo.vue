@@ -1,8 +1,8 @@
 <template>
   <div class="edit-todo">
     <h2>Add Todo</h2>
-    <div v-if="currStep === 1" class="step-one">
-      <b-form @submit="handleNextStep(2)" @reset="onReset">
+    <b-form @submit="onSubmit">
+      <div v-if="currStep === 1" class="step-one">
         <b-form-group id="input-group-1" label="Task Name" label-for="input-1">
           <b-form-input id="input-1" v-model="form.name" required placeholder="Enter Name"></b-form-input>
         </b-form-group>
@@ -18,30 +18,27 @@
         <b-form-group id="input-group-4" label="End" label-for="input-4">
           <b-form-input id="input-4" type="datetime-local" v-model="form.end" required></b-form-input>
         </b-form-group>
-
-        <p> Task Priority: {{form.priority}}</p>
+        <p>Task Priority: {{form.priority}}</p>
         <b-input-group id="input-group-5" prepend="1" append="10" class="mt-3">
-          <b-form-input id="form-prior" type="range" min="1" max="10" v-model="form.priority" required ></b-form-input>
+          <b-form-input id="form-prior" type="range" min="1" max="10" v-model="form.priority" required></b-form-input>
         </b-input-group>
-
-        <b-button type="submit" variant="primary">Submit</b-button>
-        <b-button type="reset" variant="danger">Reset</b-button>
-      </b-form>
-    </div>
-    <div v-if="currStep === 2" class="step-two">
-      <p>Added a task! do you think you can finish this in the time you set? Would you like to break it down into bit size pieces?</p>
-      <p>if yes => go to step-four, if no => go to step three</p>
-      <button @click="onSubmit">I'm good</button>
-      <button @click="handleNextStep(3)">Add bites</button>
-    </div>
-    <div v-if="currStep === 3" class="step-three">
-      <p>Adding sub tasks.. PUT THIS IN LATER!</p>
-      <button @click="onSubmit">Add task</button>
-    </div>
-    <div v-if="currStep === 4" class="step-four">
-      <p>Added a task!</p>
-      <b-button type="primary" @click="addNew"> Add another task </b-button>
-    </div>
+        <b-button type="button" variant="primary" @click="handleNextStep(2)">Next</b-button>
+      </div>
+      <div v-if="currStep === 2" class="step-two">
+        <p>Added a task! do you think you can finish this in the time you set? Would you like to break it down into bit size pieces?</p>
+        <p>if yes => go to step-four, if no => go to step three</p>
+        <button @click="onSubmit">I'm good</button>
+        <button type="button" @click="handleNextStep(3)">Add bites</button>
+      </div>
+      <div v-if="currStep === 3" class="step-three">
+        <p>Adding sub tasks.. PUT THIS IN LATER!</p>
+        <button type="submit">Add task</button>
+      </div>
+      <div v-if="currStep === 4" class="step-four">
+        <p>Added a task!</p>
+        <b-button type="button" @click="addNew">Add another task</b-button>
+      </div>
+    </b-form>
   </div>
 </template>
 
@@ -66,7 +63,7 @@ export default {
     handleAddSubtasks: function() {
       return;
     },
-    addNew: function(){
+    addNew: function() {
       this.currStep = 1;
       this.form = {
         name: null,
@@ -74,7 +71,7 @@ export default {
         start: null,
         end: null,
         priority: null
-      }
+      };
     },
     handleNextStep: function(n) {
       this.currStep = n;
@@ -82,14 +79,14 @@ export default {
     onSubmit: function(e) {
       e.preventDefault();
       if (this.subtasks.length === 0) {
-        this.$store.dispatch('addTodo', {...this.form, children: []});
+        this.$store.dispatch("addTodo", { ...this.form, children: [] });
       } else {
-        this.$store.dispatch('addTodo', {...this.form, children: this.subtasks});
+        this.$store.dispatch("addTodo", {
+          ...this.form,
+          children: this.subtasks
+        });
       }
       this.currStep = 4;
-    },
-    onReset: function() {
-      return;
     }
   }
 };

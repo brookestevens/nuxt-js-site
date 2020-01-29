@@ -1,17 +1,35 @@
 <template>
   <div class="container">
-    <p>Set timer - 15min, 25 min increments</p>
+    <img src="/images/mochi-concept.png" alt="mochi sitting">
     <div>
-      <h3>Task name: {{$store.state.currentToDo.name}} </h3>
+      <h3>Task name: {{currTodo}} </h3>
+      <p> How long do you want to work on this? </p>
     </div>
-    <button>Start</button>
-    <button>Stop</button>
+    <div id="options-div">
+      <div class="option-card">
+        <p> 15 Minutes </p>
+        <b-button type="button" variant="primary" @click="handleClick(15)" > Start </b-button>
+      </div>
+      <div class="option-card">
+        <p> 30 Minutes </p>
+        <b-button type="button" variant="primary" @click="handleClick(30)" > Start </b-button>
+      </div>
+      <div class="option-card">
+        <p> 45 Minutes </p>
+        <b-button type="button" variant="primary" @click="handleClick(45)" > Start </b-button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: "TimerPage",
+  data: function(){
+    return{
+      currTodo: this.$store.state.currentToDo.name
+    }
+  },
   mounted: function() {
     // Inside page components
     this.$OneSignal.push(() => {
@@ -31,14 +49,37 @@ export default {
         console.log("Received NotificationOpened:", data);
       }
     ]);
+  },
+  methods: {
+    handleClick: function(time){
+    // arrow function to prevent losing reference to 'this'
+    console.log("here: ", time);
+    setTimeout(() => {
+      var options = {
+        body: `Time's up for ${this.currTodo}`,
+        icon: '/icon.png'
+      }
+      new Notification('Nibble Reminder', options);
+    }, 6000);
+    }
   }
 };
 </script>
 
-<style>
+<style scoped>
 .container {
   margin: 0 auto;
   min-height: 100vh;
   text-align: center;
 }
+#options-div{
+  display: flex;
+  justify-content: center;
+}
+.option-card{
+  border: 1px solid black;
+  padding: 1em;
+  margin: 1em;
+}
+
 </style>

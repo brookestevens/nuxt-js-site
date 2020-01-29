@@ -1,15 +1,15 @@
 <template>
-  <div class="tree-container">
-    <ul>
-      <template v-for = "i in todo">
-        <li :key="'li-'+i.id">
-            <TodoNode :key="i.id" :todo="i"/>
-        </li>
-        <template v-if="i.children.length > 0">
-          <TodoTree :key="i.id" :todo="i.children" />
+  <div>
+    <!-- Actual content of the todo -->
+    <TodoNode :todo="todo"/>
+    <div :id=" childrenId ">
+    <template v-if="todo.children.length > 0">
+        <!-- Render any Sub Tasks -->
+        <template v-for="i in todo.children">
+          <TodoTree :key="i.id" :todo="i" />
         </template>
-      </template>
-    </ul>
+    </template>
+    </div>
   </div>
 </template>
 
@@ -17,12 +17,22 @@
 import TodoNode from "../components/TodoNode";
   export default{
     name: "TodoTree",
-    props:['todo'],
-    // watch: { 
-    //   	todo: function(newVal, oldVal) { // watch it
-    //       console.log('Prop changed: ', newVal, ' | was: ', oldVal)
-    //     }
-    // },
+    props:{
+      todo: Object,
+      childrenId: String
+    },
     components: {TodoNode}
   }
 </script>
+
+<style scoped>
+  h3{
+    text-align: left;
+  }
+  p{
+    text-align: left;
+  }
+  .show-list{
+    display: none;
+  }
+</style>

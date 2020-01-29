@@ -1,14 +1,15 @@
 <template>
-  <div>
+  <div id="login-form-container">
     <b-form @submit="handleLoginSubmit">
       <label class="sr-only" for="login-email">Email</label>
       <b-input v-model="email" id="login-email" type="email" class="mb-2 mr-sm-2 mb-sm-0" placeholder="Email"></b-input>
-
+      <br/>
       <label class="sr-only" for="login-password">Password</label>
       <b-input v-model="password" id="login-password" type="password" placeholder="Password"></b-input>
-      <br />
+      <br/>
       <b-button variant="primary" type="submit" value="Submit">Login</b-button>
     </b-form>
+    <br/>
     <b-button @click="handleClick" variant="primary" value="Create New">Create an Account</b-button>
     <b-button variant="primary" value="Forgot" disabled>Forgot Password?</b-button>
   </div>
@@ -24,7 +25,9 @@ export default {
     };
   },
   mounted: function() {
-    console.log("mounted login form");
+    // if(localStorage.getItem('login') === 'true'){ //already logged in
+    //   this.$router.push('dashboard');
+    // }
   },
   methods: {
     verifyData: function(data){
@@ -60,5 +63,12 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+ #login-form-container{
+  margin: auto;
+  width: 65%;
+  border: 1px solid black;
+  padding: 1.5em;
+  border-radius: 1em;
+ }
 </style>

@@ -11,11 +11,11 @@ export default{
   layout: 'home',
   created: function(){
     fetch('/api/logout')
-    .then(res => res.json()) 
+    .then(res => {
+      console.log("logged out");
+      this.$store.dispatch('logout');
+    })
     .catch(err => console.log(err));
-  },
-  mounted: function(){
-    this.$store.commit('LOGOUT');
   },
   methods:{
     handleClick : function(){

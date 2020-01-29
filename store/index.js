@@ -17,7 +17,8 @@ export const mutations = {
     state.loggedIn = localStorage.getItem('login'); //set local storage
   },
   LOGOUT(state) {
-    state.loggedIn = localStorage.getItem('login'); //set local storage
+    localStorage.setItem('login', 'false');
+    state.loggedIn = 'false'; //set local storage
   },
   UPDATE(state, payload) {
     state.todos = payload;
@@ -33,7 +34,7 @@ export const mutations = {
     state.todos = payload;
   },
   ADD(state, payload) {
-    state.todos = payload;
+    state.todos.push(payload);
   },
   DARK_MODE(state) {
     state.dark = localStorage.getItem('dark');
@@ -48,25 +49,15 @@ export const actions = {
     console.log(f);
     todosDb.connect()
       .then(db => {
-        fetch('/api/addTask', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-          .then(res => res.json())
-          .then(res => {
-            if (res.status === 1) {
-              //add to indexed db with response
-              const tx = db.transaction('all-todos', 'readwrite');
-              tx.store.add(f)
-                .then(() => {
-                  tx.objectStore('all-todos').getAll().then(data => {
-                    commit('ADD', data);
-                  })
-                })
-                .then(() => tx.done)
-            }
-          })
-          .catch(err => {
-            //no connection add to indexed db with user data
-            db.add({ id: f.id, results: f }).then(() => commit('ADD', f));
-          })
+        //add to indexed db with response
+        const tx = db.transaction('all-todos', 'readwrite');
+        tx.store.add(f)
+        .then(() => commit('ADD', f))
+        .then(() => tx.done)
+        .then(() =>{
+          fetch('/api/addTask', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+          .catch(err => console.log("Error adding to PG: ", err))
+        })
       }).catch(err => console.log(err));
   },
   addNibble({ commit }, payload) {
@@ -75,13 +66,13 @@ export const actions = {
   },
   delete({ commit }, payload) {
     let deletedList = deleteTask(this.state.todos, payload);
-    todosDb.connect()
-      .then(db => {
+    todosDb.connect().then(db => {
         db.delete('all-todos', payload.id)
+          .then(() => {
+            fetch('/api/delete', {method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({id: payload.id})})
+            .catch(err => console.log("Offline, or deletion error in PG: ", err))
+          })
           .then(() => commit('DELETE', deletedList));
-      })
-      .then(() => {
-        fetch(`/api/delete?id=${payload.id}`).catch(err => console.log("Offline, or deletion error in PG: ", err))
       })
       .catch(err => console.log("Error deleting: ", err));
   },
@@ -99,7 +90,7 @@ export const actions = {
       db.put('all-todos', payload)
       .then(() => {
         fetch('/api/updateTask', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)})
-        .then(res => res.json()).catch(err => console.log(err))
+        .then(res => res.json()).catch(err => console.log("Offline or PG update error: ", err)); //network error, background sync
       })
       .then(() => {
         commit('UPDATE', updatedList);
@@ -107,40 +98,30 @@ export const actions = {
     }).catch(err => console.log('couldnt set todo: ', err));
   },
   getAllTodos({ commit }) {
-    fetch('/api/getEverything')
+    fetch('/api/getEverything') //this route is intercepted by SW
       .then(res => res.json())
       .then(res => {
-        if (res.status === 1) {
-          commit('GET_ALL_TODOS', res.results); //commit the resposnse from server
-          return res.results;
-        }
+        commit('GET_ALL_TODOS', res.results); //set state to either server / IDB response
+        return res;
       })
-      .then(results => {
-        todosDb.connect()
-          .then(db => {
+      .then(res => {
+        if (res.status === 1) { //if the response came back from the network, update state
+          todosDb.connect().then(db => {
             const tx = db.transaction('all-todos', 'readwrite');
             tx.objectStore('all-todos').clear().then(() => {
-              //delte old contents and batch insert the array
-              for (let i = 0; i < results.length; i++) {
-                tx.store.add(results[i]);
+              //delete old contents and batch insert the array
+              for (let i = 0; i < res.results.length; i++) {
+                tx.store.add(res.results[i]);
               }
-            })
-              .then(() => {
-                tx.done;
-              }).catch(err => console.log("Error adding all todos to IDB: ", err));
-          }).catch(err => console.log("error connecting to IDB ", err));
-      })
-      .catch(err => { //offline request handler => set state.todos to the IDB
-        console.log("Offline, couldn't fetch, setting state to whats in IDB");
-        todosDb.connect()
-          .then(db => {
-            const tx = db.transaction('all-todos', 'readwrite');
-            tx.objectStore('all-todos').getAll().then(res => {
-              commit('GET_ALL_TODOS', res);
-            })
-              .then(() => tx.done);
-          });
-      });
+            }).then(() => tx.done) //close the transaction
+          })
+          .catch(err => console.log("Error adding all todos to IDB: ", err));
+        }
+        else if(res.status === 2){
+          // no need to update IDB
+          console.log("Data came from IDB, not updating");
+        }
+      }).catch(err => console.log(err));
   },
   getSortedTodos({ commit }, payload) {
     localStorage.setItem('sort', payload);
@@ -185,7 +166,6 @@ export const actions = {
       });
   },
   logout({ commit }) {
-    localStorage.setItem('login', 'false');
     commit('LOGOUT');
   },
   changeView({ commit }) {

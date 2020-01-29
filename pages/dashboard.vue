@@ -1,9 +1,18 @@
 <template>
   <div class="container">
-    <h2> Tasks and stuff </h2>
+    <OnlineStatus/>
+    <h2> {{new Date().toDateString()}} </h2>
     <hr>
     <div class="dashboard-grid">
-      <div class="grid-child-a"> <TodoTree :todo="todos"/> </div>
+      <div class="grid-child-a"> 
+        <template v-for="i in todos">
+          <div :key="i.id" class="todo-container" >
+            <p class="see-more" @click="handleClick(i.id)"> See More </p>
+            <!-- send an id to the sub tasks to hide  -->
+            <TodoTree :childrenId="i.id" :todo="i"/>
+          </div>
+        </template>
+      </div>
       <div class="grid-child-b"> <AddTodo/> </div>
     </div>
   </div>
@@ -12,6 +21,7 @@
 <script>
 import TodoTree from "../components/TodoTree";
 import AddTodo from "../components/AddTodo";
+import OnlineStatus from "../components/OnlineStatus";
 export default{
   name: "Dashboard",
   created: function(){
@@ -38,7 +48,13 @@ export default{
       return this.$store.state.todos;
     }
   },
-  components: {TodoTree, AddTodo}
+  methods:{
+    handleClick: function(id){
+      //toggle the class to hide/show the sub tasks
+      document.getElementById(id).classList.toggle('show-list');
+    }
+  },
+  components: {TodoTree, AddTodo, OnlineStatus}
 }
 </script>
 
@@ -53,4 +69,17 @@ export default{
 }
 .grid-child-a{grid-area: list}
 .grid-child-b{grid-area: edit}
+.todo-container{
+  border: 1px solid black;
+  border-radius: 1em;
+  padding: 1em;
+  margin-bottom: 1em;
+  width: 70%;
+}
+.see-more{
+  text-decoration: underline;
+}
+.see-more:hover{
+  color: blue;
+}
 </style>
