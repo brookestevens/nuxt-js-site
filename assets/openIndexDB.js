@@ -28,7 +28,7 @@ class todosDB {
     }
     getError(){
         return new Promise((resolve, reject) => {
-            resolve(this);
+            reject(this);
         });
     }
 

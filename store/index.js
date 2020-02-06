@@ -56,9 +56,9 @@ export const actions = {
         .then(() => tx.done)
         .then(() =>{
           fetch('/api/addTask', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-          .catch(err => console.log("Error adding to PG: ", err))
+          .catch(err => console.error("Error adding to PG: ", err))
         })
-      }).catch(err => console.log(err));
+      }).catch(err => console.error(err)); //idb not available
   },
   addNibble({ commit }, payload) {
     console.log("adding nibble: ", payload);
@@ -70,11 +70,11 @@ export const actions = {
         db.delete('all-todos', payload.id)
           .then(() => {
             fetch('/api/delete', {method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({id: payload.id})})
-            .catch(err => console.log("Offline, or deletion error in PG: ", err))
+            .catch(err => console.error("Offline, or deletion error in PG: ", err))
           })
           .then(() => commit('DELETE', deletedList));
       })
-      .catch(err => console.log("Error deleting: ", err));
+      .catch(err => console.error("Error deleting: ", err));
   },
   setCurrentItem({ commit }, payload) {
     todosDb.connect().then(db => {
@@ -82,7 +82,7 @@ export const actions = {
         .catch(err => db.put('curr-todo', payload))
     })
       .then(() => commit('SET_CURRENT_ITEM', payload))
-      .catch(err => console.log('couldnt set todo: ', err));
+      .catch(err => console.error('couldnt set todo: ', err));
   },
   update({ commit }, payload) {
     let updatedList = updateTask(this.state.todos, payload);
@@ -95,7 +95,7 @@ export const actions = {
       .then(() => {
         commit('UPDATE', updatedList);
       });
-    }).catch(err => console.log('couldnt set todo: ', err));
+    }).catch(err => console.error('couldnt set todo: ', err));
   },
   getAllTodos({ commit }) {
     fetch('/api/getEverything') //this route is intercepted by SW
@@ -109,19 +109,20 @@ export const actions = {
           todosDb.connect().then(db => {
             const tx = db.transaction('all-todos', 'readwrite');
             tx.objectStore('all-todos').clear().then(() => {
-              //delete old contents and batch insert the array
-              for (let i = 0; i < res.results.length; i++) {
-                tx.store.add(res.results[i]);
+              // Delete old contents and batch insert the array
+              // Inserting in order is not reliable for some reason...
+              for(let i=0; i< res.results.length; i++){
+                tx.store.add(res.results[i]).catch(err => console.error(err));
               }
             }).then(() => tx.done) //close the transaction
           })
-          .catch(err => console.log("Error adding all todos to IDB: ", err));
+          .catch(err => console.error("Error adding all todos to IDB: ", err));
         }
         else if(res.status === 2){
           // no need to update IDB
           console.log("Data came from IDB, not updating");
         }
-      }).catch(err => console.log(err));
+      }).catch(err => console.error(err));
   },
   getSortedTodos({ commit }, payload) {
     localStorage.setItem('sort', payload);
@@ -136,7 +137,7 @@ export const actions = {
             if (res.status === 1) {
               commit('GET_SORTED_TODOS', { data: res.results, option: payload });
             }
-          }).catch(err => console.log(err))
+          }).catch(err => console.error(err))
         return;
       case 'priority':
         fetch('/api/getPriorityList')
@@ -145,7 +146,7 @@ export const actions = {
             if (res.status === 1) {
               commit('GET_SORTED_TODOS', { data: res.results, option: payload });
             }
-          }).catch(err => console.log(err))
+          }).catch(err => console.error(err))
         return;
       default:
         return null;
@@ -162,7 +163,7 @@ export const actions = {
         return res.status;
       })
       .catch(err => {
-        console.log("Error: ", err);
+        console.error("Error: ", err);
       });
   },
   logout({ commit }) {

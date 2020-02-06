@@ -34,15 +34,26 @@ function openDB(){
   });
 }
 
+// function sortArray(arr, key){
+//   if(arr[0].hasOwnProperty(key)){
+//     return arr.sort((a,b) => a[key] - b[key])
+//   }
+//   else{
+//     return false;
+//   }
+// }
+
 workbox.routing.registerRoute(/\/api\/getEverything/, async ({ url, event, params }) => {
   try {
     let res = await fetch(event.request);
     res = await res.json();
     return await new Response(JSON.stringify(res)); //fall through to normal network request if online
   }
-  //error with response, load from indexed DB
+  //error with response, respond from indexed DB
   catch (err) {
     return openDB().then(res => {
+      // sort the array cause IDB is being a little shit for some reason
+      res.sort((a,b) => a.index - b.index);
       return new Response(JSON.stringify({ status: 2, results: res})); //respond  with whats in IDB if offline
     })
   }
