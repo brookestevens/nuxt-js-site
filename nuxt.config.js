@@ -12,7 +12,8 @@ export default {
       { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'apple-touch-startup-image', href: '/icon.png'}
     ]
   },
   /*
@@ -20,16 +21,16 @@ export default {
   */
   loading: { color: '#fff' },
   /*
-  ** Global CSS
+  ** Global CSS - cannot access SCSS variales when using this. Styles must be in that file for it to work
   */
-  css:[
-    './assets/global.scss'
-  ],
+  css: [],
   /*
   ** Plugins to load before mounting the App
   */
-  plugins: [
-  ],
+  plugins: [{
+    src: './plugins/localStorage.js',
+    mode: 'client'
+  }],
   /*
   ** Nuxt.js dev-modules
   */
@@ -39,12 +40,15 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
-    // Doc: https://bootstrap-vue.js.org
     'bootstrap-vue/nuxt',
     '@nuxtjs/onesignal',
     '@nuxtjs/pwa',
-    '@nuxtjs/proxy'
+    '@nuxtjs/proxy',
+    '@nuxtjs/style-resources'
   ],
+  bootsrapVue:{
+    componentPlugins: ['ModalPlugin']
+  },
   oneSignal: {
     init: {
       appId: process.env.APP_ID || '78791ca2-73df-4beb-9bec-a94da1b0a71e',
@@ -75,6 +79,12 @@ export default {
     '/api' : {
       target: 'http://localhost:8000'
     }
+  },
+  // Allows for using global varaibles in component files
+  styleResources:{
+    scss: [
+      './assets/_global.scss', 
+    ]
   },
   /*
   ** Build configuration
