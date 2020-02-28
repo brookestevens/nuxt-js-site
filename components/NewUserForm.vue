@@ -1,18 +1,14 @@
 <template>
   <b-form @submit="handleNewAccountSubmit">
-    <label class="sr-only" for="fname">First Name</label>
+    <label class="sr-only" for="fname">User Name</label>
     <b-input
       v-model="newUser.fname"
       id="fname"
       type="text"
       class="mb-2 mr-sm-2 mb-sm-0"
-      placeholder="First Name"
+      placeholder="Username"
     ></b-input>
     <br/>
-
-    <label class="sr-only" for="lname">Last Name</label>
-    <b-input v-model="newUser.lname" id="lname" type="text" placeholder="Last Name"></b-input>
-    <br />
 
     <label class="sr-only" for="password">Password</label>
     <b-input v-model="newUser.password" id="password" type="password" placeholder="Password"></b-input>
@@ -37,7 +33,6 @@ export default {
     return {
       newUser: {
         fname: null,
-        lname: null,
         email: null,
         password: null,
         phone: null
