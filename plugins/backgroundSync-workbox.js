@@ -52,9 +52,9 @@ workbox.routing.registerRoute(/\/api\/getEverything/, async ({ url, event, param
   //error with response, respond from indexed DB
   catch (err) {
     return openDB().then(res => {
-      // sort the array cause IDB is being a little shit for some reason
+      // sort the array cause IDB order is unreliable??
       res.sort((a,b) => a.index - b.index);
-      return new Response(JSON.stringify({ status: 2, results: res})); //respond  with whats in IDB if offline
+      return new Response(JSON.stringify({ responseCode: 2, results: res})); //respond  with whats in IDB if offline
     })
   }
 });
