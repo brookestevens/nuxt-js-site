@@ -1,22 +1,11 @@
-# nuxt-js-site
+# Nibble
 
-> My bee&#39;s knees Nuxt.js project
+Capstone Project for ATLS 4100. Nibble away at your tasks with this web application.
 
-## Build Setup
+## Features
 
-``` bash
-# install dependencies
-$ npm run install
+ - Offline support
+ - timer and notifications
+ - PWA
 
-# serve with hot reload at localhost:3000
-$ npm run dev
 
-# build for production and launch server
-$ npm run build
-$ npm run start
-
-# generate static project
-$ npm run generate
-```
-
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
