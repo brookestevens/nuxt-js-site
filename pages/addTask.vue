@@ -17,7 +17,7 @@
               <b-button variant="outline-primary" @click="checkForm">Yes, break it down </b-button>
               <b-button id="next-button" type="submit" variant="outline-primary">Nah, I'm good </b-button>
               <div id="tip-container">
-                Tip: If you do't where to start, it might be a good idea to break this task into smaller bites.
+                Tip: If you don't where to start, it might be a good idea to break this task into smaller bites.
               </div>
             </div>
       </div>
@@ -27,7 +27,7 @@
                 <div class="speech-bubble">
                     <p>Let's create up to three 'bites' to make this task more managable! If you need to, you can even break down the 'bite' further into 'nibbles'! </p>
                 </div>
-                <img src="/images/mochi-concept.png" alt="no me gusta vivir" width="50%" height="auto"/>
+                <img src="/images/mochi-business.png" alt="no me gusta vivir" width="50%" height="auto"/>
                 <div id="button-draft" v-if="draft.length > 0">
                   <p> My Bites: </p>
                   <template v-for="(i, index) in draft">
@@ -272,6 +272,13 @@ export default {
     .add-todo-container{
       margin-left: 0px; 
       width: 100%;
+    }
+    #next-steps-container{
+      flex-direction: column;
+      height: 200px;
+    }
+    #tip-container{
+      font-size: 14px;
     }
   }
 </style>

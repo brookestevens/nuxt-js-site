@@ -1,10 +1,7 @@
 <template>
   <div v-if="currTodo" id="timer-container">
     <div id="mochi-speech-bubble">
-      <div class="speech-bubble">
-        <p> You can do this! How long would you like to work on <strong> {{currTodo.name}} </strong> ? </p>
-      </div>
-      <img id="mochi-sitting" src="/images/mochi-concept.png" alt="i want to die">
+      <img id="mochi-sitting" src="/images/mochi-wakeup.png" alt="i want to die">
     </div>
     <div id="start-timer">
       <div id="timer-container" > {{minutes}} : {{seconds}} </div>
@@ -71,6 +68,8 @@ export default {
           this.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
           this.seconds = Math.floor((distance % (1000 * 60)) / 1000);
           if( distance <= 0){ 
+            this.minutes = 0;
+            this.seconds = 0;
             var options = {
               body: this.currTodo.name,
               icon: '/icon.png'
@@ -92,26 +91,27 @@ export default {
       this.countDownDate = 0;
     },
     finishTask: function(){
-      // Use the update route! => task-ID is in the query param
+      // task-ID is in the query param
       fetch('/api/changeTaskStatus', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({id: this.currTodo.id}) })
       .then(res => {
         if(res.status === 200){
           let id = window.location.search.replace('?taskID=', '');
-          // this.$store.dispatch('update', {form: {...this.currTodo, status: !this.currTodo.status}, taskID: id})
-          // .catch(err => console.error(err));
-          return res.json();
+          this.$store.dispatch('updateTaskStatus', {form: {...this.currTodo, status: true}, taskID: id})
+          .catch(err => console.error(err));
         }
+        return res.json();
       })
       .then(res => {
-        this.$store.commit('UPDATE_TASKS_COMPLETED', res[2].tasks_completed); //response from DB
+        this.$store.commit('UPDATE_TASKS_COMPLETED', res.message[2].tasks_completed); //response from DB
       })
+      .then(() => this.$router.push('/dashboard'))
       .catch(err => console.error(err))
     }
   }
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .container {
   margin: 0 auto;
   min-height: 100vh;
@@ -140,7 +140,7 @@ export default {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 30%;
+  width: 45%;
 }
 
 #timer-container{
@@ -156,6 +156,20 @@ export default {
 #timer-buttons{
   display: flex;
   justify-content: space-between;
+}
+
+@media only screen and (max-width: $phone){
+  #start-timer{
+    width: 80%;
+  }
+  #timer-buttons{
+    margin-top: 1em;
+    flex-direction: column;
+    height: 120px;
+  }
+  #timer-container{
+    font-size: 2em;
+  }
 }
 
 </style>

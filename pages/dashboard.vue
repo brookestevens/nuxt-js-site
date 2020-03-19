@@ -2,7 +2,10 @@
   <div>
     <div id="header-info">
       <h2 id="date-header"> {{new Date().toDateString()}} </h2>
-      <b-button @click="$router.push('/addTask')" variant="outline-primary"> Add Meal! </b-button>
+      <b-button @click="$router.push('/addTask')" variant="outline-primary" class="mobile-add-meal"> 
+        <div class="mobile-replace-text"> Add Meal! </div> 
+        <div class="mobile-replaced-text"> &#x2B; </div> 
+      </b-button>
     </div>
     <hr>
     <div class="dashboard-grid">
@@ -44,14 +47,22 @@
       </div>
       <div class="grid-child-b">
         <!-- show different pictures based on progress -->
-        <img id="mochi-sleeping" src="/images/mochi-sleeping.png" alt="please put this poor dev out of their misery " >
         <template v-if="nibblesLeft <= 0">
+          <div class='mochi-wrapper'>
+            <img id="mochi-sleeping" src="/images/mochi-egg.png" alt="fuk this shit" >
+          </div>
           <h4> Mochi got all of his nibbles today! Good job </h4>
         </template>
         <template v-else-if="nibblesLeft > 0 && nibblesLeft <=4">
+          <div class='mochi-wrapper'>
+            <img id="mochi-sleeping" src="/images/mochi-brushteeth.png" alt="fml" >
+          </div>
           <h4> Mochi needs <strong style="color: #E27272"> {{nibblesLeft}} more nibbles</strong> today </h4>
         </template>
-        <template v-else-if="nibblesLeft === 5">
+        <template v-else>
+          <div class='mochi-wrapper'>
+            <img id="mochi-sleeping" src="/images/mochi-sleep.png" alt="please put this poor dev out of their misery " >
+          </div>
           <h4> Mochi needs <strong style="color: #E27272"> {{nibblesLeft}} more nibbles</strong> today </h4>
         </template>
       </div>
@@ -137,6 +148,10 @@ export default{
     text-align: center;
   }
 }
+
+.mobile-replaced-text{
+  display: none;
+}
 // form input for the main task
 .edit-form-input{
     width: 80%;
@@ -156,9 +171,13 @@ export default{
     font-weight: bold;
   }
 }
+.mochi-wrapper{
+  width: 70%;
+  margin: auto;
+}
 
 #mochi-sleeping{
-  width: 80%;
+  width: 100%;
   height: auto; 
 }
 #task-actions{
@@ -210,6 +229,23 @@ export default{
       margin-right: auto;
       width: 50%;
     }
+  }
+  // change text on mobile view
+  .mobile-add-meal{
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+  .mobile-replace-text{
+    display: none;
+  }
+  .mobile-replaced-text{
+    display: block;
+    font-size: 20px;
+    padding-bottom: 3px;
+    font-weight: 600;
   }
 }
 </style>
