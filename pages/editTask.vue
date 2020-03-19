@@ -13,7 +13,10 @@
                         <TodoTree :taskID="currTodo.id" :todo="i" :childrenId="i.id" :key="`subtask-${i.id}`" />
                     </template>
                 </div>
-                <div v-else> There are no bites for this task! </div>
+                <div v-else> 
+                    <p>There are no bites for this task! </p>
+                    <b-button variant="primary"> Work on this task! </b-button>
+                </div>
                 <div id="mochi-help">
                     <div class="speech-bubble">
                         <p> This is your meal! You can edit and delete your "bites" and "nibbles" here. </p>
@@ -68,8 +71,8 @@ export default {
     width: 40vw;
 }
 #trash-task{
-    width: 5%;
-    height: 5%;
+    width: 30px;
+    height: 30px;
 }
 #trash-task:hover{
     cursor: pointer;

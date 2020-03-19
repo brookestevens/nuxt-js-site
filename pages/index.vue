@@ -14,7 +14,7 @@ export default{
   components:{
     LoginForm
   },
-  layout: 'home'
+  layout: 'authenticate'
 }
 </script>
 

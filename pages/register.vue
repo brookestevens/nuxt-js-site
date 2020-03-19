@@ -14,7 +14,7 @@ export default{
   components:{
     NewUserForm
   },
-  layout: 'home'
+  layout: 'authenticate'
 }
 </script>
 

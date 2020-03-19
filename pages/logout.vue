@@ -8,7 +8,7 @@
 <script>
 export default{
   name: "Logout",
-  layout: 'home',
+  layout: 'authenticate',
   created: function(){
     fetch('/api/logout')
     .then(res => {

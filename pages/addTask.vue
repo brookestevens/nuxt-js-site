@@ -1,40 +1,38 @@
 <template>
-    <div id ="add-task-page">
+    <div>
         <h2> Add a new Task </h2>
         <hr/>
         <b-form @submit="onSubmit">
-        <div v-if="currStep === 1" class="step-one">
+        <div v-if="currStep === 1" class="step-one" id="add-task-page">
             <b-form-group id="input-group-1" label="Task Name" label-for="input-1">
             <b-form-input id="input-1" v-model="form.name" required placeholder="Enter Name"></b-form-input>
             </b-form-group>
-            <p>Task Priority: {{form.priority}}</p>
-            <b-input-group id="input-group-5" prepend="1" append="5" class="mt-3">
-            <b-form-input id="form-prior" type="range" min="1" max="5" v-model="form.priority" required></b-form-input>
-            </b-input-group>
-
-            <b-button id="next-button" type="button" variant="primary" @click="checkForm">Next</b-button>
+            <b-form-group id="task-priority" label="How important is this task? " class="mt-3">
+              <b-form-radio v-model="form.priority" name="priority-options" value="1"> Not that important</b-form-radio>
+              <b-form-radio v-model="form.priority" name="priority-options" value="2"> Average </b-form-radio>
+              <b-form-radio v-model="form.priority" name="priority-options" value="3"> Very important</b-form-radio>
+            </b-form-group>
+            <p>Do you want to break this task into smaller parts? </p>
+            <div id="next-steps-container">
+              <b-button variant="outline-primary" @click="checkForm">Yes, break it down </b-button>
+              <b-button id="next-button" type="submit" variant="outline-primary">Nah, I'm good </b-button>
+              <div id="tip-container">
+                Tip: If you do't where to start, it might be a good idea to break this task into smaller bites.
+              </div>
+            </div>
       </div>
       <div v-if="currStep === 2" class="step-two">
-        <img src="/images/mochi-concept.png" alt="i hate this class" width="50%" height="auto"/>
-        <p>Added a task! do you think you can finish this in the time you set? Would you like to break it down into bite size pieces?</p>
-        <b-button type="button" variant="primary" @click="onSubmit"> I'm good! </b-button>
-        <b-button type="button" variant="primary" @click="handleNextStep(3)">Add Bites</b-button>
-      </div>
-      <div v-if="currStep === 3">
         <div class="mochi-add-bites">
             <div>
                 <div class="speech-bubble">
                     <p>Let's create up to three 'bites' to make this task more managable! If you need to, you can even break down the 'bite' further into 'nibbles'! </p>
                 </div>
                 <img src="/images/mochi-concept.png" alt="no me gusta vivir" width="50%" height="auto"/>
-                <div>
-                  <b-button type="button" @click="addBite" variant="primary"> Add new Bite </b-button>
-                  <b-button type="button" @click="deleteBite" variant="primary"> Remove </b-button>
-                </div>
                 <div id="button-draft" v-if="draft.length > 0">
                   <p> My Bites: </p>
                   <template v-for="(i, index) in draft">
                     <b-button @click="handleEdit(i, index)" type="button" variant="primary" :key="index" > {{i.subtask.subtask_name}} </b-button>
+                    <br :key="`break-${index}`"/>
                   </template>
                 </div>
                 <div v-else>
@@ -45,32 +43,34 @@
                 <!-- Add bites here -->
                   <div>
                     <div class="header-options">
-                      <h3> Add a bite for "{{form.name}}" </h3>
+                      <h3 style="color: #E27272" > {{form.name}} </h3>
                       <!-- push object to nibble array if button clicked -->
                       <!-- Validate this current form before adding new bite -->
                     </div>
                     <!-- Adding new bites -->
                     <div class="add-bite-container">
                       <b-card bg-variant="light">
-                          Name: <b-form-input v-model="activeDraft.subtask.subtask_name" type="text" placeholder="Bite name"></b-form-input>
+                          <b-form-input v-model="activeDraft.subtask.subtask_name" type="text" placeholder="Bite name"></b-form-input>
+                          <span @click="deleteBite" style="font-size: 20px"> &#x2715; </span>
                       </b-card>
                     </div>
                     <div class="nibbles-container">
                       <h4> Add Nibbles (optional) </h4>
                         <b-card bg-variant="light">
-                          Name: <b-form-input type="text" v-model="activeDraft.nibbles[0].nibble_name" placeholder="Nibble name"></b-form-input>
+                          <b-form-input type="text" v-model="activeDraft.nibbles[0].nibble_name" placeholder="Nibble name"></b-form-input>
                         </b-card>
                         <b-card bg-variant="light">
-                          Name: <b-form-input type="text" v-model="activeDraft.nibbles[1].nibble_name" placeholder="Nibble name"></b-form-input>
+                          <b-form-input type="text" v-model="activeDraft.nibbles[1].nibble_name" placeholder="Nibble name"></b-form-input>
                         </b-card>
                     </div>
                     <!-- submit everything -->
+                    <b-button type="button" @click="addBite" variant="outline-primary"> Add new Bite </b-button>
                     <b-button type="button" variant="primary" @click="handleSetSubtasks">I'm done! </b-button>
                   </div>
             </div>
         </div>
       </div>
-      <div v-if="currStep === 4" class="step-four">
+      <div v-if="currStep === 3" class="step-three">
         <p>Added a task!</p>
         <b-button type="button" @click ="$router.push('/dashboard')" > Take me to my dashboard! </b-button>
       </div>
@@ -167,19 +167,16 @@ export default {
     },
     handleEdit: function(draft, index){
       //check if there are less than 2 nibbles
-      let copy = {...this.draft[index]};
-      if(copy.nibbles.length === 0){
-        //set null object
+      if(this.draft[index].nibbles.length === 0){
+        this.draft[index].nibbles.push({ nibble_name: null}, {nibble_name: null}); // add 2 nibbles
       }
-      else if(!copy.nibbles[0].nibble_name){
-        //set the null object
-      }
-      else if(!copy.nibbles[1].nibble_name){
-        //set null object
+      else if(this.draft[index].nibbles.length === 1){
+        this.draft[index].nibbles.push({ nibble_name: null}); // 1 new nibble
       }
       else{
-        this.activeDraft = this.draft[index];
+        this.activeDraft = this.draft[index];// user had 2 nibbles already
       }
+      this.activeDraft = this.draft[index];
       this.activeIndex = index;
     },
     handleNextStep: function(n) {
@@ -205,12 +202,18 @@ export default {
       //get data and send it to store
       this.$store.dispatch('addTodo', data);
       //go to the end of form 
-      this.handleNextStep(4);
+      this.handleNextStep(3);
     },
-    onSubmit: function(){
-      console.log(this.form);
-      this.$store.dispatch('addSingleTask', this.form);
-      this.handleNextStep(4);
+    onSubmit: function(event){
+      event.preventDefault();
+      if(this.form.name && this.form.priority){
+        this.$store.dispatch('addSingleTask', this.form);
+        this.handleNextStep(3);
+      }
+      else{
+        alert("Please fill out all the fields");
+        return;
+      }
     }
   }
 }
@@ -224,6 +227,11 @@ export default {
   }
   .add-todo-container{
       margin-left: 1em; 
+      width: 50%;
+  }
+  .nibbles-container{
+    margin-top: 1em;
+    margin-bottom: 2em;
   }
   #button-draft{
     button{
@@ -234,6 +242,25 @@ export default {
     margin-left: 15%;
     margin-right: 15%;
   }
+  #next-steps-container{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+  #tip-container{
+    background-color: $alert-bg;
+    width: 250px;
+    border-radius: 4px;
+    padding: 5px;
+    font-size: 12px;
+  }
+  .card-body{
+    display: flex;
+    align-items: center;
+    span:hover{
+      cursor: pointer;
+    }
+  }
   @media only screen and (max-width: $phone){
     .mochi-add-bites{
       flex-direction: column;
@@ -241,6 +268,10 @@ export default {
     #add-task-page{
       margin-left: 5%;
       margin-right: 5%;
+    }
+    .add-todo-container{
+      margin-left: 0px; 
+      width: 100%;
     }
   }
 </style>
