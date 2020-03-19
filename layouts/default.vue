@@ -3,7 +3,7 @@
     <!-- header -->
     <div>
       <b-navbar toggleable="lg" type="dark" variant="dark">
-        <nuxt-link to="/dashboard" class= "navbar-brand" >Nibble</nuxt-link>
+        <nuxt-link id="app-name" to="/dashboard" class= "navbar-brand" >nibble</nuxt-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
         <b-collapse id="nav-collapse" is-nav>
@@ -16,7 +16,7 @@
             <b-nav-item-dropdown right>
               <!-- Using 'button-content' slot -->
               <template v-slot:button-content>
-                <em>User</em>
+                <em>Profile</em>
               </template>
               <b-dropdown-item href="/settings">My settings </b-dropdown-item>
               <li role="presentation">
@@ -29,28 +29,17 @@
     </div>
     <!-- Body  -->
     <div id="body-content" >
-      <OnlineStatus/>
       <nuxt/>
     </div>
   </div>
 </template>
-<script>
-import OnlineStatus from "../components/OnlineStatus";
-export default {
-  components:{ OnlineStatus}
-}
-</script>>
 <style lang="scss">
-html {
-  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 16px;
-  word-spacing: 1px;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
+#app-name{
+  font-family: $title-font;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 44px;
 }
 
 #body-content{
@@ -66,7 +55,7 @@ html {
 }
 
 .menu-link:hover {
-  color: lightblue;
+  color: white;
   text-decoration: none;
 }
 </style>
