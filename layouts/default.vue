@@ -58,4 +58,11 @@
   color: white;
   text-decoration: none;
 }
+
+@media only screen and (max-width: $phone){
+  #body-content{
+    margin-right: 5%;
+    margin-left: 5%;
+  }
+}
 </style>
