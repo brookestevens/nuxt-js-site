@@ -26,10 +26,23 @@ class todosDB {
     static get CURR_TODO(){
         return 'curr-todo';
     }
+    static get TIMER(){
+        return 'timer'
+    }
     getError(){
         return new Promise((resolve, reject) => {
             reject(this);
         });
+    }
+    //already looged in
+    async setTimerData(){
+        try{
+            let res = await fetch('/api/getUserTaskData');
+            return res;
+        }
+        catch(Error){
+            return Error;
+        }
     }
 
     async connect() { //make a new DB and stores, return a promise
@@ -42,6 +55,14 @@ class todosDB {
                     }
                     if(!db.objectStoreNames.contains(todosDB.CURR_TODO)){
                         db.createObjectStore(todosDB.CURR_TODO, {keyPath: 'id'});
+                    }
+                    if(!db.objectStoreNames.contains(todosDB.TIMER)){
+                        let objectStore = db.createObjectStore(todosDB.TIMER, {keyPath: 'name'});
+                        //let data = await this.setTimerData();
+                        //console.log(data); //should be the user data to init the table
+                        objectStore.add({name: 'timeInt',  value: 25});
+                        objectStore.add({name: 'goal',  value: 5});
+                        objectStore.add({name: 'completed',  value: 0}); //this value is reset to 0 every day
                     }
                 }
             });
