@@ -14,7 +14,12 @@ export default {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Fredoka+One|Quicksand&display=swap'},
-      { rel: 'apple-touch-startup-image', href: '/icon.png'}
+      { rel: 'apple-touch-startup-image', href: '/icon.png'},
+      { rel: 'apple-touch-icon', href: '/icon.png' },
+      { rel: "apple-touch-startup-image", href: "/icon.png", media: "(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" },
+      { rel: "apple-touch-startup-image", href: "/icon.png", media: "(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" },
+      { rel: "apple-touch-startup-image", href: "/icon.png", media: "(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" },
+      { rel: "apple-touch-startup-image", href: "/icon.png", media: "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" }
     ]
   },
   /*
@@ -77,7 +82,14 @@ export default {
       workboxExtensions: './plugins/backgroundSync-workbox.js'
     },
     manifest:{
-      name: 'Nibble!'
+      name: 'Nibble',
+      background_color: '#E27272',
+      lang: "en-US",
+      orientation: "portrait-primary"
+    },
+    meta:{
+      viewport: 'width=device-width, initial-scale=1, user-scalable=no',
+      mobileAppIOS: true
     }
   },
   proxy: {
