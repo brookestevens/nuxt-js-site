@@ -1,38 +1,73 @@
+// App's Varaibles
 // Sizing
 $page-margin: 10%;
 $radius: 5px;
 
 //Colors
 $box-shadow-color: rgba(235, 170, 170, 0.3);
-$peach: rgb(255, 151, 81);
-$main-color: #ff7d49;
-// Breakpoints
+$main-color: #E27272;
+$mild: #64C874;
+$medium: #EF9757;
+$urgent: #DD3939;
+$bg-color: #E5E5E5;
+$alert-bg: #FBE6E6;
 
+// Breakpoints
 $tablet: 800px;
 $phone: 760px;
 
+//fonts
+$title-font : 'Fredoka One';
+$main-font: 'Quicksand';
+
+// override Bootstrap colors
+$theme-colors: (
+  "primary": $main-color,
+  "secondary": $main-color,
+  "success": $mild,
+  "info": $medium,
+  "warning": $medium,
+  "danger": $urgent,
+  "light": white,
+  "dark": $main-color
+);
+
+//Import Bootstrap Vue stylesheets 
+@import '../node_modules/bootstrap/scss/bootstrap';
+@import '../node_modules/bootstrap-vue/src/index.scss';
+
+
 // Override Bootstrap styles
+
+html {
+    word-spacing: 1px;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: $main-font, Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+}
 
 .card{
     margin-top: 1em;
     box-shadow: 3px 3px 5px $box-shadow-color;
     border-left: 5px solid $main-color;
 }
+
 // FOR THE COLOR CODING
 .card.priority-1{
-    border-left: 5px solid rgb(11, 5, 94);
+    border-left: 5px solid $mild;
 }
 .card.priority-2{
-    border-left: 5px solid rgb(64, 0, 182);
+    border-left: 5px solid $medium;
 }
 .card.priority-3{
-    border-left: 5px solid rgb(0, 78, 167);
-}
-.card.priority-4{
-    border-left: 5px solid rgb(255, 174, 0);
-}
-.card.priority-5{
-    border-left: 5px solid rgba(255, 0, 0, 0.89);
+    border-left: 5px solid $urgent;
 }
 
 .card-body{
