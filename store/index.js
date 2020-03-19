@@ -7,14 +7,15 @@ export const state = () => ({
   currentToDo: null, //indexDB
   taskInProgress: 'false',
   loggedIn: 'false', //localstorage
-  sort: 'all', //localstorage
-  dark: 'false' //localstorage
+  nibbleCount: 5,  //IDB
+  nibblesCompleted: 0, //IDB
+  timeInt: 25 //IDB
+
 })
 
 export const mutations = {
   GET_ALL_TODOS(state, payload) {
     state.todos = payload;
-    state.sort = 'all';
   },
   LOGIN(state) {
     state.loggedIn = localStorage.getItem('login'); //set local storage
@@ -24,27 +25,30 @@ export const mutations = {
     state.loggedIn = 'false'; //set local storage
   },
   UPDATE(state, payload) {
+    payload.sort((a,b) => a.index - b.index);
     state.todos = payload;
-  },
-  GET_SORTED_TODOS(state, payload) {
-    state.sort = localStorage.getItem('sort');
-    state.todos = payload.data;
   },
   SET_CURRENT_ITEM(state, payload) {
     state.currentToDo = payload;
   },
   DELETE(state, payload) {
+    payload.sort((a,b) => a.index - b.index);
     state.todos = payload;
   },
   ADD(state, payload) {
     state.todos.push(payload);
   },
-  DARK_MODE(state) {
-    state.dark = localStorage.getItem('dark');
-  },
   TOGGLE_TASK(state){
     state.taskInProgress = localStorage.getItem('taskInProgress');
+  },
+  UPDATE_SETTINGS(state){
+    state.nibbleCount = state.goal;
+    state.timeInt = state.timeInt;
+  },
+  UPDATE_TASKS_COMPLETED(state, payload){
+    state.nibblesCompleted = payload;
   }
+
 }
 
 export const actions = {
@@ -175,34 +179,6 @@ export const actions = {
         }
       }).catch(err => console.error(err));
   },
-  getSortedTodos({ commit }, payload) {
-    localStorage.setItem('sort', payload);
-    switch (payload) {
-      case 'all':
-        this.getAllTodos();
-        return;
-      case 'recent':
-        fetch('/api/getFirstDueList')
-          .then(res => res.json())
-          .then(res => {
-            if (res.status === 1) {
-              commit('GET_SORTED_TODOS', { data: res.results, option: payload });
-            }
-          }).catch(err => console.error(err))
-        return;
-      case 'priority':
-        fetch('/api/getPriorityList')
-          .then(res => res.json())
-          .then(res => {
-            if (res.status === 1) {
-              commit('GET_SORTED_TODOS', { data: res.results, option: payload });
-            }
-          }).catch(err => console.error(err))
-        return;
-      default:
-        return null;
-    }
-  },
   login({ commit }, payload) {
     return fetch('api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
       .then(res => res.json())
@@ -225,12 +201,22 @@ export const actions = {
     localStorage.setItem('taskInProgress', s.toString());
     commit('TOGGLE_TASK');
   },
-  changeView({ commit }) {
-    let s = !JSON.parse(this.state.dark);
-    localStorage.setItem('dark', s.toString());
-    commit('DARK_MODE');
+  updateSettings({commit}, payload){
+    fetch('/api/updateSettings', {method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({form: payload})})
+    // .then(res => res.json())
+    // .then(res => {
+    //   todosDb.connect()
+    //   .then(db => {
+    //     //add to indexed db with response
+    //     const tx = db.transaction('timer', 'readwrite');
+    //     tx.store.put({name: 'goal', value:  payload.form.goal})
+    //     tx.store.put({name: 'timeInt', value:  payload.form.timeInt})
+    //   })
+    //   .then(() => tx.done)
+    // })
+    // .then(res => commit('UPDATE_SETTINGS', payload))
+    // .catch(err => console.error(err))
   }
-
 }
 
 //format the data for IDB, also how PG returns data to client
