@@ -1,11 +1,20 @@
 <template>
     <!-- The information and modal -->
     <div :class="`todo-child ${level}`">
-        <b-card>
-            <b-card-text>
+        <b-card class="node-card-text">
+            <b-card-text class="todo-content">
+              <div>
                 <b-form-input :id="`name-${todo.id}`" @blur="handleUpdate" class="edit-form-input" v-model="taskName" placeholder="Task name"></b-form-input>
-                <h6 @click="showTimerPage(todo)" class="work-on-task" > Work on this task! </h6>
-                <img @click="handleDelete" id="edit-icon" src="/images/trash-can.png" alt="kill me plz" />
+                <template v-if="todo.status === false && todo.children.length === 0">
+                    <!-- If the status is false and its the deepest nested child then be allowed to work on it -->
+                    <h6 @click="showTimerPage(todo)" :class="`work-on-task task-status-${todo.status}`" > Work on this task! </h6>
+                </template>
+                <template v-else-if="todo.status === true ">
+                    <!-- if the task is finished, show that its done -->
+                    <h6 class="task-finished"> Completed! </h6>
+                </template>
+              </div>
+              <img @click="handleDelete" id="edit-icon" src="/images/trash-can.png" alt="kill me plz" />
             </b-card-text>
         </b-card>
     </div>
@@ -28,7 +37,7 @@ export default {
     methods:{
         showTimerPage: function(todo){
             this.$store.dispatch('setCurrentItem', this.todo)
-            .then(() => this.$router.push('/timer'))
+            .then(() => this.$router.push(`/timer?taskID=${this.taskID}`))
             .catch(err => console.error(err));
         },
         handleDelete: function(){
@@ -76,29 +85,44 @@ export default {
     .nibble{
         margin-left: 2em;
     }
+    .card.node-card-text{
+        border-left: 1px solid rgba(0, 0, 0, 0.125);
+    }
+    .todo-content{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        div{
+            width: 80%;
+        }
+    }
     #edit-icon{
-        height: 25px;
+        height: 20px;
         width: auto;
-        float: right;
     }
     #edit-icon:hover{
         cursor: pointer;
     }
-    .work-on-task{
+    .work-on-task, task-finished{
         margin-bottom: 0px;
         color: darkgray;
         max-width: 140px;
         text-decoration: underline;
     }
     .work-on-task:hover{
-        color: $peach;
+        color: $main-color;
         cursor: pointer;
+    }
+    .task-finished{
+        color: $mild;
+        text-decoration: none;
     }
     .edit-form-input{
         border: none;
         padding-left: 0px;
-        margin-bottom: .5em;
-        font-size: 1.25em;
+        padding-bottom: 1px;
+        margin-bottom: .4em;
+        font-size: 1em;
         font-weight: 500;
     }
     .edit-form-input:hover{
