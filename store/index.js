@@ -7,8 +7,8 @@ export const state = () => ({
   currentToDo: null, //indexDB
   taskInProgress: 'false',
   loggedIn: 'false', //localstorage
-  nibbleCount: 5,  //IDB
-  nibblesCompleted: 0, //IDB
+  nibbleCount: 5,  //IDB => daily goal
+  nibblesCompleted: 0, //IDB => reset daily to 0
   timeInt: 25 //IDB
 
 })
@@ -45,7 +45,7 @@ export const mutations = {
     state.nibbleCount = state.goal;
     state.timeInt = state.timeInt;
   },
-  UPDATE_TASKS_COMPLETED(state, payload){
+  UPDATE_TASKS_COMPLETED(state, payload){ // no action for this mutation, payload comes from server
     state.nibblesCompleted = payload;
   }
 
@@ -55,7 +55,6 @@ export const actions = {
   addTodo({ commit }, payload) {
     // format payload to what indexed db wants
     let format = pgToIDB(payload);
-    console.log('Payload: ', payload);
     //console.log('Formatting', pgToIDB(payload)); //if the added task has sub tasks, then children need to be formatted
     todosDb.connect()
       .then(db => {
@@ -94,7 +93,7 @@ export const actions = {
         .then(results => {
           deleteTask(results, payload);
           commit('DELETE', results); //REPLACE THE WHOLE ARRAY
-          console.log(check + " Deleted array: ", results );
+          // console.log(check + " Deleted array: ", results );
           let result = results.filter(i => i.id === payload.taskID);
           return {
             idToDelete: payload.id,
@@ -104,11 +103,9 @@ export const actions = {
         })
         .then( ids => {
           if(ids.idToDelete.substring(0,4) === 'task' ){
-            console.log("DELETE THE WHOLE INDEX");
             tx.store.delete(ids.taskID);
           }
           else{
-            console.log("updating the index instead with: ", ids.index);
             tx.store.put(ids.index);
           }
         })
@@ -135,8 +132,8 @@ export const actions = {
       .then(results => {
         updateTask(results, payload.form);
         commit('UPDATE', results); //REPLACE THE WHOLE ARRAY
-        console.log(check + " UPDATED ARRAY: ", results);
-        console.log(check + " updating this index: ", payload.taskID);
+        // console.log(check + " UPDATED ARRAY: ", results);
+        // console.log(check + " updating this index: ", payload.taskID);
         //need to find the updated index
         let result = results.filter(i => i.id === payload.taskID);
         return result[0]; // only 1 index because the index is always UNIQUE
@@ -147,7 +144,7 @@ export const actions = {
         // SEND TO SERVER 
         fetch('/api/updateTask', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)})
         .then(res => res.json())
-        .catch(err => console.log("Offline or PG update error: ", err)); //network error, background sync
+        .catch(err => console.error("Offline or PG update error: ", err)); //network error, background sync
       })
     }).catch(err => console.error('couldnt set todo: ', err));
   },
@@ -201,6 +198,21 @@ export const actions = {
     localStorage.setItem('taskInProgress', s.toString());
     commit('TOGGLE_TASK');
   },
+  updateTaskStatus({commit}, payload){
+    todosDb.connect().then(db => {
+      const tx = db.transaction('all-todos', 'readwrite');
+      tx.objectStore('all-todos').getAll()
+      .then(results => {
+        updateTask(results, payload.form);
+        commit('UPDATE', results); //REPLACE THE WHOLE ARRAY
+        //need to find the updated index
+        let result = results.filter(i => i.id === payload.taskID);
+        return result[0]; // only 1 index because the index is always UNIQUE
+      })
+      .then(result => tx.store.put(result))
+      .then(() => tx.done)
+    }).catch(err => console.error('couldnt set todo: ', err));
+  },
   updateSettings({commit}, payload){
     fetch('/api/updateSettings', {method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({form: payload})})
     // .then(res => res.json())
@@ -235,22 +247,17 @@ function pgToIDB(payload) {
     if(payload.nibbles.length === 0){
       return n;
     }
-    console.log("name: ", name);
-    console.log("nibble array: ", copyN);
-    //use filter array method? 
+    // console.log("name: ", name);
+    // console.log("nibble array: ", copyN);
     for(let i=0; i< copyN.length; i++){
-      console.log(copyN[i]);
+      //console.log(copyN[i]);
       if(copyN[i].subtask_name === name){
-        console.log('matched');
         n.push({
           id: "tempID-" + Math.floor(Math.random() * 100000),
           name: copyN[i].nibble_name,
           status: false,
           children: []
         });
-      }
-      else{
-        console.log('no match');
       }
     }
     return n;
@@ -292,7 +299,7 @@ function updateTask(state, form ) {
   // console.log("FORM: ", form);
   for (let i = 0; i < state.length; i++) {
     if (state[i].id === form.id) {
-      console.log(check + "updating found id: ", state[i].id);
+      //console.log(check + "updating found id: ", state[i].id);
       state.splice(state.indexOf(state[i]), 1, form); //replace the whole object
       return;
     }
