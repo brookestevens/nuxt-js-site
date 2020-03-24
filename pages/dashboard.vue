@@ -84,9 +84,13 @@ export default{
         this.$router.push('/');
       }
     })
-    .catch(err => {
-      console.log(err);
-    })
+    .catch(err => console.error(err));
+  },
+  mounted: function(){
+    const poop = String.fromCodePoint(0x1F4A9);
+    console.log("%cHello There!","color: #E27272; font-size: 2.75em;");
+    console.log("%cThis site is a load of " + poop + poop,"color:rosybrown; font-size: 2.5em;");
+    console.log("%cPlease go away!", "color:rosybrown; font-size: 2em;");
   },
   computed: {
     todos(){
