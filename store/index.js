@@ -1,6 +1,6 @@
 import todosDb from '../assets/openIndexDB';
-const check = String.fromCharCode(9989);
-const cancel = String.fromCharCode(0x274C);
+// const check = String.fromCharCode(9989);
+// const cancel = String.fromCharCode(0x274C);
 
 export const state = () => ({
   todos: [], //indexDB
@@ -152,7 +152,6 @@ export const actions = {
     fetch('/api/getEverything') //this route is intercepted by SW
       .then(res => res.json())
       .then(res => {
-        console.log(check + " Server response: ", res.results);
         commit('GET_ALL_TODOS', res.results); //set state to either server / IDB response
         return res;
       })
@@ -172,7 +171,7 @@ export const actions = {
         }
         else if(res.responseCode === 2){
           // no need to update IDB
-          console.log("Data came from IDB, not updating");
+          console.log("Using IDB, not updating");
         }
       }).catch(err => console.error(err));
   },
