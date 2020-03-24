@@ -1,4 +1,3 @@
-
 export default {
   mode: 'universal',
   /*
@@ -14,10 +13,10 @@ export default {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Fredoka+One|Quicksand&display=swap'},
-      { rel: 'apple-touch-startup-image', href: '/icon.png'},
       { rel: 'apple-touch-icon', href: '/icon.png' },
       { rel: "apple-touch-startup-image", href: "/icon.png", media: "(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" },
-      { rel: "apple-touch-startup-image", href: "/icon.png", media: "(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" },
+      // for iphone 6/7/8
+      { rel: "apple-touch-startup-image", href: "/icon-375-667.png", media: "(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" },
       { rel: "apple-touch-startup-image", href: "/icon.png", media: "(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" },
       { rel: "apple-touch-startup-image", href: "/icon.png", media: "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" }
     ]
@@ -25,7 +24,7 @@ export default {
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#fff' },
+  loading: { color: '#E27272' },
   /*
   ** Global CSS - cannot access SCSS variales when using this. Styles must be in that file for it to work
   */
