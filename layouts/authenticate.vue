@@ -1,11 +1,5 @@
 <template>
-    <div id="home-page">
+    <div>
         <nuxt/>
     </div>
 </template>
-
-<style>
-    #home-page{
-        color: blue;
-    }
-</style>
