@@ -12,10 +12,9 @@ export default{
   created: function(){
     fetch('/api/logout')
     .then(res => {
-      console.log("logged out");
       this.$store.dispatch('logout');
     })
-    .catch(err => console.log(err));
+    .catch(err => console.error(err));
   },
   methods:{
     handleClick : function(){

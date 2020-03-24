@@ -139,10 +139,6 @@ export default {
       // Breaks if user fills out second nibble option and not first option
       if(this.activeDraft.nibbles[0].nibble_name) nDraft.push({...this.activeDraft.nibbles[0], subtask_name: copySub.subtask_name }); //copy object
       if(this.activeDraft.nibbles[1].nibble_name) nDraft.push({...this.activeDraft.nibbles[1], subtask_name: copySub.subtask_name });
-      console.log("Adding new bite: ", {
-        subtask: copySub,
-        nibbles: nDraft
-      });
       //Push it to the array if its new. If its editing just replace the index in the array
       if(this.activeIndex === -1){
         this.draft.push({
