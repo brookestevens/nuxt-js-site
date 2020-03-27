@@ -1,4 +1,4 @@
-console.log("Background sync plugin added!");
+// console.log("Background sync plugin added!");
 //https://developers.google.com/web/tools/workbox/modules/workbox-background-sync
 
 //send the post requests when online is established
