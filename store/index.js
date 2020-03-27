@@ -1,6 +1,6 @@
 import todosDb from '../assets/openIndexDB';
 // const check = String.fromCharCode(9989);
-// const cancel = String.fromCharCode(0x274C);
+const cancel = String.fromCharCode(0x274C);
 
 export const state = () => ({
   todos: [], //indexDB
@@ -152,6 +152,7 @@ export const actions = {
     fetch('/api/getEverything') //this route is intercepted by SW
       .then(res => res.json())
       .then(res => {
+        commit('UPDATE_TASKS_COMPLETED', +res.tasksCompleted);
         commit('GET_ALL_TODOS', res.results); //set state to either server / IDB response
         return res;
       })
@@ -185,9 +186,7 @@ export const actions = {
         }
         return res.status;
       })
-      .catch(err => {
-        console.error("Error: ", err);
-      });
+      .catch(err => console.error("Error: ", err));
   },
   logout({ commit }) {
     commit('LOGOUT');
@@ -214,19 +213,22 @@ export const actions = {
   },
   updateSettings({commit}, payload){
     fetch('/api/updateSettings', {method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({form: payload})})
-    // .then(res => res.json())
-    // .then(res => {
-    //   todosDb.connect()
-    //   .then(db => {
-    //     //add to indexed db with response
-    //     const tx = db.transaction('timer', 'readwrite');
-    //     tx.store.put({name: 'goal', value:  payload.form.goal})
-    //     tx.store.put({name: 'timeInt', value:  payload.form.timeInt})
-    //   })
-    //   .then(() => tx.done)
-    // })
-    // .then(res => commit('UPDATE_SETTINGS', payload))
-    // .catch(err => console.error(err))
+    .then(res => {
+      if(res.status === 200){
+        todosDb.connect().then(db => {
+          //add to indexed db with response
+          const tx = db.transaction('timer', 'readwrite');
+          tx.store.put({name: 'goal', value:  payload.goal})
+          tx.store.put({name: 'timeInt', value:  payload.timeInt})
+        })
+        .then(() => tx.done)
+        .then(() => commit('UPDATE_SETTINGS', payload))
+      }
+      else{
+        console.error(cancel + ' non-200 status code')
+      }
+    })
+    .catch(err => console.error(err))
   }
 }
 
@@ -282,7 +284,6 @@ function pgToIDB(payload) {
 //Delete the specified index
 
 function deleteTask(s, payload) {
-  // console.log("looking for ID: ", payload.id);
   for (let i = 0; i < s.length; i++) {
     if (s[i].id === payload.id) {
       s.splice(s.indexOf(s[i]), 1); //remove
@@ -295,10 +296,8 @@ function deleteTask(s, payload) {
 }
 
 function updateTask(state, form ) {
-  // console.log("FORM: ", form);
   for (let i = 0; i < state.length; i++) {
     if (state[i].id === form.id) {
-      //console.log(check + "updating found id: ", state[i].id);
       state.splice(state.indexOf(state[i]), 1, form); //replace the whole object
       return;
     }
