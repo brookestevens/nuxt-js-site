@@ -1,5 +1,9 @@
 <template>
   <div v-if="currTodo" id="timer-container">
+    <div class="header-container">
+      <h2 id="task-name-header"> {{currTodo.name}} </h2>
+    </div>
+    <hr/>
     <div id="mochi-speech-bubble">
       <img id="mochi-sitting" src="/images/mochi-wakeup.png" alt="i want to die">
     </div>
@@ -96,13 +100,14 @@ export default {
       .then(res => {
         if(res.status === 200){
           let id = window.location.search.replace('?taskID=', '');
+          // change the task status
           this.$store.dispatch('updateTaskStatus', {form: {...this.currTodo, status: true}, taskID: id})
           .catch(err => console.error(err));
         }
         return res.json();
       })
       .then(res => {
-        this.$store.commit('UPDATE_TASKS_COMPLETED', res.message[2].tasks_completed); //response from DB
+        this.$store.commit('UPDATE_TASKS_COMPLETED', res.message[2].tasks_completed);
       })
       .then(() => this.$router.push('/dashboard'))
       .catch(err => console.error(err))
@@ -112,6 +117,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.header-container{
+  margin-top: .5em;
+}
+#task-name-header{
+  color: $main-color;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 45px;
+  text-align: left;
+}
 .container {
   margin: 0 auto;
   min-height: 100vh;

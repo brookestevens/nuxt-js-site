@@ -102,7 +102,6 @@ export default{
   },
   methods:{
     showSubTasks: function(todo){
-      //NOt using dynamic routes cause of `nuxt generate`
       this.$store.dispatch('setCurrentItem', todo)
       .then(() => this.$router.push('/editTask'))
       .catch(err => console.error(err));

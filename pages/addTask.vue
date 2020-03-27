@@ -1,9 +1,11 @@
 <template>
     <div>
-        <h2> Add a new Task </h2>
-        <hr/>
-        <b-form @submit="onSubmit">
-        <div v-if="currStep === 1" class="step-one" id="add-task-page">
+      <div class="header-container">
+        <h2> Add a New Task </h2>
+      </div>
+      <hr/>
+      <b-form @submit="onSubmit">
+      <div v-if="currStep === 1" class="step-one" id="add-task-page">
             <b-form-group id="input-group-1" label="Task Name" label-for="input-1">
             <b-form-input id="input-1" v-model="form.name" required placeholder="Enter Name"></b-form-input>
             </b-form-group>
@@ -29,14 +31,14 @@
                 </div>
                 <img src="/images/mochi-business.png" alt="no me gusta vivir" width="50%" height="auto"/>
                 <div id="button-draft" v-if="draft.length > 0">
-                  <p> My Bites: </p>
+                  <p class="bite-status" > My Bites: </p>
                   <template v-for="(i, index) in draft">
                     <b-button @click="handleEdit(i, index)" type="button" variant="primary" :key="index" > {{i.subtask.subtask_name}} </b-button>
                     <br :key="`break-${index}`"/>
                   </template>
                 </div>
                 <div v-else>
-                  <p> Added Bites show up here! </p>
+                  <p class="bite-status"> Added Bites show up here! </p>
                 </div>
             </div>
             <div class="add-todo-container">
@@ -215,11 +217,22 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+  .header-container{
+    margin-top: .5em;
+    h2{
+      color: $main-color;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 36px;
+      line-height: 45px;
+      text-align: left;
+    }
+  }
   .mochi-add-bites{
       display: flex;
   }
-  .speech-bubble::after {
-      right: 80%;
+  .bite-status{
+    font-weight: bold;
   }
   .add-todo-container{
       margin-left: 1em; 

@@ -58,7 +58,6 @@ class todosDB {
                     }
                     if(!db.objectStoreNames.contains(todosDB.TIMER)){
                         let objectStore = db.createObjectStore(todosDB.TIMER, {keyPath: 'name'});
-                        //let data = await this.setTimerData();
                         //console.log(data); //should be the user data to init the table
                         objectStore.add({name: 'timeInt',  value: 25});
                         objectStore.add({name: 'goal',  value: 5});
