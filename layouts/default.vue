@@ -5,7 +5,6 @@
       <b-navbar toggleable="lg" type="dark" variant="dark">
         <nuxt-link id="app-name" to="/dashboard" class= "navbar-brand" >nibble</nuxt-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
             <nuxt-link class="menu-link" to="/dashboard">Dashboard</nuxt-link>

@@ -11,7 +11,7 @@ export const state = () => ({
   nibblesCompleted: 0, //IDB => reset daily to 0
   timeInt: 25 //IDB
 
-})
+});
 
 export const mutations = {
   GET_ALL_TODOS(state, payload) {
@@ -63,7 +63,7 @@ export const actions = {
         tx.store.add(format)
         .then(() => commit('ADD', format))
         .then(() => tx.done)
-        .then(() =>{
+        .then(() => {
           fetch('/api/addTask', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
           .catch(err => console.error("Error adding to PG: ", err))
         })
@@ -178,13 +178,12 @@ export const actions = {
   },
   login({ commit }, payload) {
     return fetch('api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-      .then(res => res.json())
       .then(res => {
-        if (res.status === 1) {
+        if (res.status === 200) {
           localStorage.setItem('login', 'true');
           commit('LOGIN');
         }
-        return res.status;
+        return true;
       })
       .catch(err => console.error("Error: ", err));
   },
@@ -218,8 +217,8 @@ export const actions = {
         todosDb.connect().then(db => {
           //add to indexed db with response
           const tx = db.transaction('timer', 'readwrite');
-          tx.store.put({name: 'goal', value:  payload.goal})
-          tx.store.put({name: 'timeInt', value:  payload.timeInt})
+          tx.store.put({name: 'goal', value:  +payload.goal})
+          tx.store.put({name: 'timeInt', value:  +payload.timeInt})
         })
         .then(() => tx.done)
         .then(() => commit('UPDATE_SETTINGS', payload))
