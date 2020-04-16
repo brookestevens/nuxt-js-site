@@ -40,26 +40,6 @@ export default {
       countDownDate: 0
     }
   },
-  mounted: function(){
-    // Inside page components
-    this.$OneSignal.push(() => {
-      this.$OneSignal.isPushNotificationsEnabled(isEnabled => {
-        if (isEnabled) {
-          console.log("Push notifications are enabled!");
-        } else {
-          console.log("Push notifications are not enabled yet.");
-        }
-      });
-    });
-
-    // Using window and array form
-    window.$OneSignal.push([
-      "addListenerForNotificationOpened",
-      data => {
-        console.log("Received NotificationOpened:", data);
-      }
-    ]);
-  },
   methods: {
     handleClick: function(){
       // arrow function to prevent losing reference to 'this'
@@ -74,11 +54,17 @@ export default {
           if( distance <= 0){ 
             this.minutes = 0;
             this.seconds = 0;
-            var options = {
-              body: this.currTodo.name,
-              icon: '/icon.png'
+            try{
+              var options = {
+                body: this.currTodo.name,
+                icon: '/icon.png'
+              };
+              new Notification('Nibble Reminder - Time\'s Up!', options);
             }
-            new Notification('Nibble Reminder - Time\'s Up!', options);
+            catch(err){
+              // Notification API unavailable
+              console.error(err);
+            }
             clearInterval(interval); //stop the loop
             this.$store.dispatch('toggleTask'); //set it back to false
             // open modal to ask if task was finished or not
